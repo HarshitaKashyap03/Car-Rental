@@ -4,10 +4,14 @@ import {Link, useLocation, useNavigate} from 'react-router-dom'
 import { useAppContext } from '../context/AppContext'
 import toast from 'react-hot-toast'
 import {motion} from 'motion/react'
+import { useClerk, UserButton, useUser } from '@clerk/clerk-react'
 
 const Navbar = () => {
 
-    const {setShowLogin, user, logout, isOwner, axios, setIsOwner} = useAppContext()
+
+    const { setShowLogin, isOwner, axios, setIsOwner } = useAppContext()
+    const { openSignIn } = useClerk()
+    const { isSignedIn, user } = useUser()
 
     const location = useLocation()
     const [open, setOpen] = useState(false)
@@ -52,9 +56,18 @@ const Navbar = () => {
 
             <div className='flex max-sm:flex-col items-start sm:items-center gap-6'>
 
-                <button onClick={()=> isOwner ? navigate('/owner') : changeRole()} className="cursor-pointer">{isOwner ? 'Dashboard' : 'List cars'}</button>
+                                <button onClick={()=> isOwner ? navigate('/owner') : changeRole()} className="cursor-pointer">{isOwner ? 'Dashboard' : 'List cars'}</button>
 
-                <button onClick={()=> {user ? logout() : setShowLogin(true)}} className="cursor-pointer px-8 py-2 bg-primary hover:bg-primary-dull transition-all text-white rounded-lg">{user ? 'Logout' : 'Login'}</button>
+                                {isSignedIn ? (
+                                    <UserButton/>
+                                ) : (
+                                    <button
+                                        onClick={() => openSignIn()}
+                                        className="cursor-pointer px-8 py-2 bg-primary hover:bg-primary-dull transition-all text-white rounded-lg"
+                                    >
+                                        Login
+                                    </button>
+                                )}
             </div>
         </div>
 

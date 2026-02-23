@@ -40,9 +40,16 @@ export const AppProvider = ({ children })=>{
     const fetchCars = async () =>{
         try {
             const {data} = await axios.get('/api/user/cars')
-            data.success ? setCars(data.cars) : toast.error(data.message)
+            if(data.success) {
+                setCars(data.cars)
+            } else {
+                toast.error(data.message)
+            }
         } catch (error) {
-            toast.error(error.message)
+            // Only show error toast if it's not a 401 (unauthorized) error
+            if(error.response?.status !== 401) {
+                toast.error(error.message)
+            }
         }
     }
 
